@@ -8,7 +8,7 @@ The standalone Redis without additional configuration does not need a separate D
 
 The Dockerfile basically copies the redis.conf into the container and overrides the entrypoint to use it. You can build it with `podman build -t standalone_redis:<tag> -f ./Dockerfile`. You can check it afterwards with `podman image ls` and run it with `podman run --name standlone_redis --rm --publish 6379:6379 --detach standalone_redis:<tag>`. The full configuration example with explanations can be found [here](https://raw.githubusercontent.com/redis/redis/6.2/redis.conf). Notable config options include:
 
-* `include` statements to include other configs
+* `include` statements to include other configs, maybe machine based
 * `loadmodule` to load [modules](https://redis.io/modules)
 * `bind` for listening on specific interfaces, default listens only on the loopback interface, for a web setup you need to change that
 * `port 6379` is the default TCP port. `port 0` won't listen on TCP
@@ -26,6 +26,8 @@ The Dockerfile basically copies the redis.conf into the container and overrides 
 * `logfile ""` is by default logging to stdout.
 * `save <seconds> <changes>` will check after <seconds> to see if a number of <changes> changes occured and write to a file specified with `dbfilename dump.rdb` in the directory specified with `dir ./`
 * `replicaof <masterip> <masterport>`
-* `masteruser user` when using 
+* `masteruser user` when using
 * `masterauth password`
 * `replica-serve-stale-data yes`
+* `replica-announce-ip` and `replica-announce-port` can be used by replicas to set their own ip and port, in case NAT changes it later on
+* `aclfile` uses an external ACL file
