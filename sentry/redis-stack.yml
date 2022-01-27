@@ -1,0 +1,18 @@
+---
+version: '3.9'
+services:
+  master:
+    image: redis-experiment
+    hostname: "{{.Node.Hostname}}"
+    environment:
+      REDIS_MODE: 'master'
+    networks:
+      - 'redis'
+    deploy:
+      mode: replicated
+      replicas: 1
+
+networks:
+  redis:
+    external: true
+    name: redis

@@ -2,7 +2,7 @@
 
 ## No changes
 
-The standalone Redis without additional configuration does not need a separate Dockerfile. Simply run `podman run --name standalone_redis --rm --publish 6379:6379 --detach redis:6.2.6-alpine`. This starts Redis 6.2.6 and publishes the internal port 6379 to the same port externally. To test if it is up, run `redis-cli ping` and you should get a PONG back.
+The standalone Redis without additional configuration does not need a separate Dockerfile. Simply run `podman run --name standalone_redis --rm --publish 6379:6379 --detach redis:6.2.6-bulsseye`. This starts Redis 6.2.6 and publishes the internal port 6379 to the same port externally. To test if it is up, run `redis-cli ping` and you should get a PONG back.
 
 ## Config changes
 

@@ -1,4 +1,4 @@
-FROM redis:6.2.6-alpine
+FROM redis:6.2.6-bullseye
 
 COPY *.conf /etc/redis/
 
