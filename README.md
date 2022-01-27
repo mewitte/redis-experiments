@@ -3,7 +3,7 @@
 In this repository I want to test redis running in containers and different functionalities of it. The tests will be run using the 6.2.6-bullseye image. This is what I want to try:
 
 1. Running one Standalone Redis container
-2. Running a sentry setup with one master, two replica and three/five sentinel nodes in swarm mode
+2. (HA setup) Running a sentry setup with one master, two replica and three/five sentinel nodes in swarm mode with no added configuration
 
 ## Container Toolchain
 
@@ -35,8 +35,12 @@ EOF
 
 ```
 
-Podman does not automatically resolve unqulified search names like redis:latest. Either use docker.io/redis:latest or run the following to add docker.io as a host to resolve unqualified search names:
+Podman does not automatically resolve unqualified search names like redis:latest. You can either use fully qualified search names like docker.io/redis:latest or run the following to add docker.io as a host to resolve unqualified search names:
 
 ```bash
 echo "unqualified-search-registries = ['docker.io']" | sudo tee /etc/containers/registries.conf
 ```
+
+## Docker Lab Environment
+
+Podman can run the standalone setup just fine. To get a real docker swarm I use [Play with Docker](https://labs.play-with-docker.com/). This gives you a sandbox environment to play with docker server. The website will give you 4 hours to play around. On the top left, next to instances, you can click on the wrench and start a 5 manager node cluster from a template. This will also give you an ssh link to connect from a shell.
