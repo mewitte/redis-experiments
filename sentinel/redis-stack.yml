@@ -1,0 +1,48 @@
+---
+version: '3.9'
+services:
+  control:
+    image: docker.io/mewitte1/redis-experiment:0.11
+    networks:
+      - 'redis'
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  master:
+    image: docker.io/mewitte1/redis-experiment:0.11
+    hostname: "{{.Node.Hostname}}"
+    environment:
+      REDIS_MODE: 'master'
+      REPLICA_USER: 'replica-user'
+      REPLICA_PASSWORD: 'replica-pass'
+      SENTINEL_USER: 'sentinel-user'
+      SENTINEL_PASSWORD: 'sentinel-pass'
+    networks:
+      - 'redis'
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  sentinel:
+    image: docker.io/mewitte1/redis-experiment-sentinel:0.2
+    hostname: "{{.Node.Hostname}}"
+    networks:
+    environment:
+      REDIS_MASTER_IP: 'master'
+      REDIS_USER: 'redis-user'
+      REDIS_PASSWORD: 'redis-pass'
+      SENTINEL_IP: 'sentinel'
+      SENTINEL_USER: 'sentinel-user'
+      SENTINEL_PASSWORD: 'sentinel-pass'
+      SENTINEL_ADMIN_USER: 'admin'
+      SENTINEL_ADMIN_PASSWORD: 'admin'
+      - 'redis'
+    deploy:
+      mode: replicated
+      replicas: 3
+      
+networks:
+  redis:
+    external: true
+    name: redis
