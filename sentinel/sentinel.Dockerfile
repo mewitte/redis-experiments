@@ -1,4 +1,4 @@
-FROM redis:6.2.6-bullseye
+FROM docker.io/redis:6.2.6-bullseye
 
 ENV REDIS_DIR "/data"
 ENV REDIS_PORT 6379

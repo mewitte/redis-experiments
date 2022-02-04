@@ -26,27 +26,26 @@ Since any replica can take over as the new master, both master and replicas will
 * One replica user that only allows replication and synchronization with the following acl rules: `+psync +replconf +ping`
 * One sentinel user with the following acl rules: `+multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill`
 
+###
+There will be a service called `redis_control`. This will be used to run redis-cli checks from inside the network. This service does not need any acl configured, as it is only used for using the `redis-cli` command to run checks and simulate an outside container accessing redis.
+
 ## Building and publishing images
 
-I created a repository on hub.docker.com for my images with the account name `mewitte1`. This allows me to use podman for building and deploy the service to a sandbox server on [Play with Docker](https://labs.play-with-docker.com/) Creating an image has the following workflow:
+I created a repository on hub.docker.com for my images with the account name `mewitte1`. This allows me to use podman for building and deploy the service to a sandbox server on [Play with Docker](https://labs.play-with-docker.com/). First, login to the docker registry of your choice (`podman login docker.io` for me). Creating an image has the following workflow:
 
 ```bash
-podman login docker.io # you only need to run this once
-TAG=0.11
+TAG=0.12
 podman build -t mewitte1/redis-experiment:$TAG -t mewitte1/redis-experiment:latest . -f redis.Dockerfile
 podman push mewitte1/redis-experiment:$TAG
 podman push mewitte1/redis-experiment # this will automatically push the latest tag
 ```
 
 ```bash
-podman login docker.io
 TAG=0.3
 podman build -t mewitte1/redis-experiment-sentinel:$TAG -t mewitte1/redis-experiment-sentinel:latest . -f sentinel.Dockerfile
 podman push mewitte1/redis-experiment-sentinel:$TAG
 podman push mewitte1/redis-experiment-sentinel # this will automatically push the latest tag
 ```
-
-There will be a service called `redis_control`. This will be used to run redis-cli checks from inside the network. My aim is to test redis as a database for services running in a swarm.
 
 ## Docker Swarm setup
 
@@ -54,9 +53,11 @@ We will need to first initalize the swarm and then create the redis network. I u
 
 ```bash
 # on your machine
-scp redis-stack.yml ip172-18-0-62-c7phlc7njsv000aihia0@direct.labs.play-with-docker.com:~/
-ssh ip172-18-0-62-c7phlc7njsv000aihia0@direct.labs.play-with-docker.com
+scp redis-stack.yml ip172-18-0-25-c7um255mrepg009trvu0@direct.labs.play-with-docker.com:~/
+ssh ip172-18-0-25-c7um255mrepg009trvu0@direct.labs.play-with-docker.com
 ```
+
+If scp does not work, use `touch redis-stack.yml` to create a file and use the Editor button above the command line on the website to paste your file in.
 
 ```bash
 # then on the machine
@@ -79,5 +80,5 @@ docker exec -it control.1... bash # use tab for autocomplete on the container na
 Then you can test the connection with
 
 ```bash
-redis-cli -h master --user redis-user --pass redis-pass ping # should give PONG
+redis-cli -h master --user replica-user --pass replica-pass ping # should give PONG
 ```

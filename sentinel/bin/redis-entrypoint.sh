@@ -4,10 +4,6 @@ set -e
 IP=$(hostname -i | awk '{print $1}')
 REDIS_DIR=${REDIS_DIR:-"/data"}
 REDIS_PORT=${REDIS_PORT:-"6379"}
-REPLICA_USER={REPLICA_USER:-""}
-REPLICA_USER={REPLICA_USER:-""}
-SENTINEL_USER={$SENTINEL_USER:-""}
-SENTINEL_PASSWORD={$SENTINEL_PASSWORD:-""}
 
 REDIS_ACL_FILE="/etc/redis/acl.conf"
 REDIS_CONF_FILE="/etc/redis/redis.conf"
@@ -16,20 +12,20 @@ REDIS_CONF_FILE="/etc/redis/redis.conf"
 # second argument should be the password
 # third argument should be the acl configuration
 function add_user() {
-  echo "$1 on >$2 $3" | tee -a $SENTINEL_ACL_FILE
+  echo "user $1 on >$2 $3" | tee -a $SENTINEL_ACL_FILE
 }
 
 # since replicas can become the master, both will get the same acl.conf
 function generate_acl_conf() {
-  echo "default off" | tee $REDIS_ACL_FILE
+  echo "user default off" | tee $REDIS_ACL_FILE
 
   # user for sentinel instances
   sentinel_acl_conf="allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill"
-  add_user $SENTINEL_USER $SENTINEL_PASSWORD $sentinel_acl_conf
+  add_user "${SENTINEL_USER}" "${SENTINEL_PASSWORD}" "$sentinel_acl_conf"
 
   # user for replica instances
   replica_acl_conf="+psync +replconf +ping"
-  add_user $REPLICA_USER $REPLICA_PASSWORD $replica_acl_conf
+  add_user "${REPLICA_USER}" "${REPLICA_PASSWORD}" "$replica_acl_conf"
 
   # debug user
   add_user "admin_user" "admin_pass" "+@all"
@@ -41,7 +37,7 @@ function write_conf() {
 }
 
 function setup_replica() {
-  # TODO
+  echo "TODO"
 }
 
 function setup_master() {
