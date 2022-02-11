@@ -6,6 +6,8 @@ We will start a master node `redis_master`. This node will be reachable in the c
 
 After the initial setup is done, there is the option to remove the initial master node, so that one of the replicas will become the master. With this setup you can scale up the replicas by one and have one less service on your cluster. If a master fails and gets restarted by docker, it will also automatically rejoin the replicas.
 
+TODO: protected-mode no doku
+
 ## ACL
 
 Since version 6, redis supports authentication via an [ACL](https://redis.io/topics/acl). The sentinel instances have different required users compared to the master and replica instances.
@@ -34,14 +36,14 @@ There will be a service called `redis_control`. This will be used to run redis-c
 I created a repository on hub.docker.com for my images with the account name `mewitte1`. This allows me to use podman for building and deploy the service to a sandbox server on [Play with Docker](https://labs.play-with-docker.com/). First, login to the docker registry of your choice (`podman login docker.io` for me). Creating an image has the following workflow:
 
 ```bash
-TAG=0.12
+TAG=0.23
 podman build -t mewitte1/redis-experiment:$TAG -t mewitte1/redis-experiment:latest . -f redis.Dockerfile
 podman push mewitte1/redis-experiment:$TAG
 podman push mewitte1/redis-experiment # this will automatically push the latest tag
 ```
 
 ```bash
-TAG=0.3
+TAG=0.22
 podman build -t mewitte1/redis-experiment-sentinel:$TAG -t mewitte1/redis-experiment-sentinel:latest . -f sentinel.Dockerfile
 podman push mewitte1/redis-experiment-sentinel:$TAG
 podman push mewitte1/redis-experiment-sentinel # this will automatically push the latest tag

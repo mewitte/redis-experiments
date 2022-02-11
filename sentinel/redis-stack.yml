@@ -2,7 +2,7 @@
 version: '3.9'
 services:
   control:
-    image: docker.io/mewitte1/redis-experiment:0.15
+    image: docker.io/mewitte1/redis-experiment:0.23
     networks:
       - 'redis'
     deploy:
@@ -10,7 +10,7 @@ services:
       replicas: 1
 
   master:
-    image: docker.io/mewitte1/redis-experiment:0.15
+    image: docker.io/mewitte1/redis-experiment:0.23
     hostname: "{{.Node.Hostname}}"
     environment:
       REDIS_MODE: 'master'
@@ -25,7 +25,7 @@ services:
       replicas: 1
 
   sentinel:
-    image: docker.io/mewitte1/redis-experiment-sentinel:0.4
+    image: docker.io/mewitte1/redis-experiment-sentinel:0.24
     hostname: "{{.Node.Hostname}}"
     networks:
       - 'redis'
