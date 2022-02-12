@@ -6,11 +6,13 @@ We will start a master node `redis_master`. This node will be reachable in the c
 
 After the initial setup is done, there is the option to remove the initial master node, so that one of the replicas will become the master. With this setup you can scale up the replicas by one and have one less service on your cluster. If a master fails and gets restarted by docker, it will also automatically rejoin the replicas.
 
-TODO: protected-mode no doku
+## Protected Mode
+
+In Redis, there is a setting for [protected mode](https://redis.io/topics/security). If enabled Redis will only allow connections on the loopback interfaces. This must be turned off (`protected-mode no` in redis.conf) for the docker swarm environment, since we will be using DNS names for discovering the IPs and accessing the Redis instances over a different interface. If enabled, the instances will initally allow the connection, but for Sentinel, they will get disconnected from each other after some time. Security is managed by ACL and the default user being turned off.
 
 ## ACL
 
-Since version 6, redis supports authentication via an [ACL](https://redis.io/topics/acl). The sentinel instances have different required users compared to the master and replica instances.
+Since version 6, redis supports authentication via an [ACL](https://redis.io/topics/acl). The sentinel instances have different required users compared to the master and replica instances. They are read from environment variables. You can use Docker Swarm Secrets to protect those variables. Another option is to add the ACL as a file via Docker Secrets. I decided against that and write the ACL file dynamically since I would need to keep the ACL file and the secret for the users up to date in two different secrets.
 
 ### Sentinel
 
@@ -28,7 +30,8 @@ Since any replica can take over as the new master, both master and replicas will
 * One replica user that only allows replication and synchronization with the following acl rules: `+psync +replconf +ping`
 * One sentinel user with the following acl rules: `+multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill`
 
-###
+### Control
+
 There will be a service called `redis_control`. This will be used to run redis-cli checks from inside the network. This service does not need any acl configured, as it is only used for using the `redis-cli` command to run checks and simulate an outside container accessing redis.
 
 ## Building and publishing images
