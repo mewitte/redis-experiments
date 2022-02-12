@@ -2,6 +2,7 @@ FROM docker.io/redis:6.2.6-bullseye
 
 ENV REDIS_PORT 6379
 ENV REDIS_DIR "/data"
+ENV SENTINEL_PORT 26379
 
 RUN apt-get update && \
     apt-get install -y \
