@@ -72,14 +72,14 @@ docker stack deploy -c redis-stack.yml redis
 
 Then get the node that the control is running on with
 ```bash
-docker service ps redis_container
+docker service ps redis_control
 exit # run the rest on the website, ssh consoles tend to go unresponsive
 ```
 
 and go to that manager. You can connect to the container with
 
 ```bash
-docker exec -it control.1... bash # use tab for autocomplete on the container name
+docker exec -it redis_control.1... bash # use tab for autocomplete on the container name
 ```
 
 Then you can test the connection with
